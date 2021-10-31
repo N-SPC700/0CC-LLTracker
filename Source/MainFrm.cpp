@@ -150,7 +150,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_FILE_GENERALSETTINGS, OnFileGeneralsettings)
 	ON_COMMAND(ID_FILE_IMPORTTEXT, OnFileImportText)
 	ON_COMMAND(ID_FILE_EXPORTTEXT, OnFileExportText)
-	ON_COMMAND(ID_FILE_CREATE_NSF, OnCreateNSF)
+	//ON_COMMAND(ID_FILE_CREATE_NSF, OnCreateNSF)
 	ON_COMMAND(ID_FILE_CREATEWAV, OnCreateWAV)
 	ON_COMMAND(ID_EDIT_UNDO, OnEditUndo)
 	ON_COMMAND(ID_EDIT_REDO, OnEditRedo)
@@ -1232,7 +1232,7 @@ bool CMainFrame::LoadInstrument(unsigned Index, const CStringW &filename) {		// 
 	if (Index != INVALID_INSTRUMENT) {
 		if (CSimpleFile file {static_cast<LPCWSTR>(filename), std::ios::in | std::ios::binary}) {
 			// FTI instruments files
-			const std::string_view INST_HEADER = "FTI";
+			const std::string_view INST_HEADER = "LTI";
 //			const char INST_VERSION[] = "2.4";
 
 			const unsigned I_CURRENT_VER_MAJ = 2;		// // // 050B
@@ -1286,7 +1286,7 @@ void CMainFrame::OnLoadInstrument()
 {
 	// Loads an instrument from a file
 
-	CFileDialog FileDialog(TRUE, L"fti", 0, OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT | OFN_EXPLORER, LoadDefaultFilter(IDS_FILTER_FTI, L"*.fti"));
+	CFileDialog FileDialog(TRUE, L"lti", 0, OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT | OFN_EXPLORER, LoadDefaultFilter(IDS_FILTER_FTI, L"*.lti"));
 
 	auto path = FTEnv.GetSettings()->GetPath(PATH_FTI);		// // //
 	FileDialog.m_pOFN->lpstrInitialDir = path.c_str();
@@ -1333,7 +1333,7 @@ void CMainFrame::OnSaveInstrument()
 			ch = L' ';
 
 	auto initPath = FTEnv.GetSettings()->GetPath(PATH_FTI);
-	if (auto path = GetSavePath(Name.data(), initPath.c_str(), IDS_FILTER_FTI, L"*.fti")) {
+	if (auto path = GetSavePath(Name.data(), initPath.c_str(), IDS_FILTER_FTI, L"*.lti")) {
 		FTEnv.GetSettings()->SetPath(path->parent_path(), PATH_FTI);
 
 		CSimpleFile file {*path, std::ios::out | std::ios::binary};
@@ -1827,12 +1827,12 @@ void CMainFrame::OnFileGeneralsettings()
 	TabMixer.m_psp.dwFlags		&= ~PSP_HASHELP;
 
 	ConfigWindow.AddPage(&TabGeneral);
-	ConfigWindow.AddPage(&TabVersion);
+	//ConfigWindow.AddPage(&TabVersion);
 	ConfigWindow.AddPage(&TabAppearance);
 	ConfigWindow.AddPage(&TabMIDI);
 	ConfigWindow.AddPage(&TabSound);
 	ConfigWindow.AddPage(&TabShortcuts);
-	ConfigWindow.AddPage(&TabMixer);
+	//ConfigWindow.AddPage(&TabMixer);
 
 	ConfigWindow.DoModal();
 

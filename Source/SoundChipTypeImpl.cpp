@@ -206,20 +206,20 @@ sound_chip_t CSoundChipTypeVRC7::GetID() const {
 }
 
 std::size_t CSoundChipTypeVRC7::GetSupportedChannelCount() const {
-	return 6;
+	return 9;
 }
 
 std::string_view CSoundChipTypeVRC7::GetShortName() const {
-	return "VRC7";
+	return "OPLL";
 }
 
 std::string_view CSoundChipTypeVRC7::GetFullName() const {
-	return "Konami VRC7";
+	return "FM Operator Type-LL";
 }
 
 std::string_view CSoundChipTypeVRC7::GetChannelShortName(std::size_t subindex) const {
 	using namespace std::string_view_literals;
-	constexpr std::string_view NAMES[] = {"FM1", "FM2", "FM3", "FM4", "FM5", "FM6"};
+	constexpr std::string_view NAMES[] = {"FM1", "FM2", "FM3", "FM4", "FM5", "FM6", "FM7", "FM8", "FM9" };
 	return subindex < std::size(NAMES) ? NAMES[subindex] :
 		throw std::invalid_argument {"Channel with given subindex does not exist"};
 }
@@ -233,6 +233,9 @@ std::string_view CSoundChipTypeVRC7::GetChannelFullName(std::size_t subindex) co
 		"FM Channel 4",
 		"FM Channel 5",
 		"FM Channel 6",
+		"FM Channel 7",
+		"FM Channel 8",
+		"FM Channel 9",
 	};
 	return subindex < std::size(NAMES) ? NAMES[subindex] :
 		throw std::invalid_argument {"Channel with given subindex does not exist"};
@@ -249,7 +252,10 @@ std::unique_ptr<CChipHandler> CSoundChipTypeVRC7::MakeChipHandler(std::uint8_t n
 		.With<CChannelHandlerVRC7>(vrc7_subindex_t::ch3)
 		.With<CChannelHandlerVRC7>(vrc7_subindex_t::ch4)
 		.With<CChannelHandlerVRC7>(vrc7_subindex_t::ch5)
-		.With<CChannelHandlerVRC7>(vrc7_subindex_t::ch6);
+		.With<CChannelHandlerVRC7>(vrc7_subindex_t::ch6)
+		.With<CChannelHandlerVRC7>(vrc7_subindex_t::ch7)
+		.With<CChannelHandlerVRC7>(vrc7_subindex_t::ch8)
+		.With<CChannelHandlerVRC7>(vrc7_subindex_t::ch9);
 }
 
 effect_t CSoundChipTypeVRC7::TranslateEffectName(char name, sound_chip_t chip) const {

@@ -137,7 +137,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 BOOL CAboutDlg::OnInitDialog()
 {
 #ifdef WIP
-	CStringW aboutString = FormattedW(L"0CC-FamiTracker %s", conv::to_wide(Get0CCFTVersionString()).data());		// // //
+	CStringW aboutString = FormattedW(L"0CC-LLTracker %s", conv::to_wide(Get0CCFTVersionString()).data());		// // //
 #else
 	CStringW aboutString = AfxFormattedW(IDS_ABOUT_VERSION_FORMAT, conv::to_wide(Get0CCFTVersionString()).data());
 #endif

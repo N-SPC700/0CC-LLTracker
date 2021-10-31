@@ -36,7 +36,7 @@ public:
 	CInstrumentEditorVRC7(CWnd* pParent = NULL);   // standard constructor
 	virtual ~CInstrumentEditorVRC7();
 	int GetIDD() const override { return IDD; }
-	LPCWSTR GetTitle() const { return L"Konami VRC7"; }		// // //
+	LPCWSTR GetTitle() const { return L"FM Operator Type-LL"; }		// // //
 
 	virtual void SelectInstrument(std::shared_ptr<CInstrument> pInst);
 

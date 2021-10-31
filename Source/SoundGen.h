@@ -301,6 +301,8 @@ private:
 
 	machine_t			m_iMachineType;						// // // NTSC/PAL
 
+	bool				m_bRenderingWave;	//sh8bit
+
 	std::unique_ptr<CArpeggiator> m_pArpeggiator;			// // //
 
 	std::shared_ptr<CWaveRenderer> m_pWaveRenderer;			// // //
@@ -317,6 +319,20 @@ private:
 	std::shared_ptr<const CSequence> m_pSequencePlayPos;		// // //
 	int					m_iSequencePlayPos;
 	int					m_iSequenceTimeout;
+
+public:	//sh8bit
+	// // // VGM logging
+	FILE* vgmFile = 0;
+	int vgmFrames = 0;
+	int vgmFrameRate = 0;
+	int vgmLoopFrame = 0;
+	int vgmLoopOffset = 0; //0 no loop, ptr-0x1c otherwise
+	uint8_t vgmHeader[0x40];
+	int vgmRegPrev[256];
+	void		VGMStartLogging(const char *Filename);
+	void		VGMStopLogging();
+	void VGMLogOPLLWrite(int reg,int val);
+	void VGMLogFrame();
 
 	// Overloaded functions
 public:

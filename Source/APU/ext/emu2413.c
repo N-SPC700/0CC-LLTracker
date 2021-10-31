@@ -79,7 +79,7 @@ SOFTWARE.
 #define OPLL_TONE_NUM 1
 static uint8_t default_inst[OPLL_TONE_NUM][(16 + 3) * 16] = {
   {
-#include "vrc7tone.h"
+#include "2413tone.h"
    },		// // //
 };
 
@@ -217,7 +217,7 @@ static int32_t rksTable[2][8][2];
 static uint32_t dphaseTable[512][8][16];
 
 // Added by jsr
-int16_t opll_volumes[10];		// // //
+int16_t opll_volumes[15];		// // //
 
 /***************************************************
 
@@ -1345,9 +1345,9 @@ update_output (OPLL * opll)
     if (!(opll->mask & OPLL_MASK_CH (i)) && (CAR(opll,i)->eg_mode != FINISH))
     {
       opll->ch_out[i] += calc_slot_car (CAR(opll,i), calc_slot_mod(MOD(opll,i))) * INST_VOL_MULT;
+
 	  int16_t absvol = abs(opll->ch_out[i]);
-      if (absvol > opll_volumes[i])
-        opll_volumes[i] = absvol;
+	  if (absvol > opll_volumes[i]) opll_volumes[i] = absvol;
     }
 
   /* CH7 */
@@ -1355,11 +1355,17 @@ update_output (OPLL * opll)
   {
     if (!(opll->mask & OPLL_MASK_CH (6)) && (CAR(opll,6)->eg_mode != FINISH))
       opll->ch_out[6] += calc_slot_car (CAR(opll,6), calc_slot_mod(MOD(opll,6))) * INST_VOL_MULT;
+
+	int16_t absvol = abs(opll->ch_out[6]);
+	if (absvol > opll_volumes[6]) opll_volumes[6] = absvol;
   }
   else
   {
     if (!(opll->mask & OPLL_MASK_BD) && (CAR(opll,6)->eg_mode != FINISH))
       opll->ch_out[9] += calc_slot_car (CAR(opll,6), calc_slot_mod(MOD(opll,6))) * RHYTHM_VOL_MULT;
+
+	int16_t absvol = abs(opll->ch_out[9]);
+	if (absvol > opll_volumes[6]) opll_volumes[6] = absvol;
   }
 
   /* CH8 */
@@ -1367,6 +1373,9 @@ update_output (OPLL * opll)
   {
     if (!(opll->mask & OPLL_MASK_CH (7)) && (CAR(opll,7)->eg_mode != FINISH))
       opll->ch_out[7] += calc_slot_car (CAR(opll,7), calc_slot_mod(MOD(opll,7))) * INST_VOL_MULT;
+
+	int16_t absvol = abs(opll->ch_out[7]);
+	if (absvol > opll_volumes[7]) opll_volumes[7] = absvol;
   }
   else
   {
@@ -1374,6 +1383,9 @@ update_output (OPLL * opll)
       opll->ch_out[10] += calc_slot_hat (MOD(opll,7), CAR(opll,8)->pgout, opll->noise_seed&1) * RHYTHM_VOL_MULT;
     if (!(opll->mask & OPLL_MASK_SD) && (CAR(opll,7)->eg_mode != FINISH))
       opll->ch_out[11] -= calc_slot_snare (CAR(opll,7), opll->noise_seed&1) * RHYTHM_VOL_MULT;
+
+	int16_t absvol = abs((opll->ch_out[10] + opll->ch_out[11]) / 2);
+	if (absvol > opll_volumes[7]) opll_volumes[7] = absvol;
   }
 
   /* CH9 */
@@ -1381,6 +1393,9 @@ update_output (OPLL * opll)
   {
     if (!(opll->mask & OPLL_MASK_CH(8)) && (CAR(opll,8)->eg_mode != FINISH))
       opll->ch_out[8] += calc_slot_car (CAR(opll,8), calc_slot_mod (MOD(opll,8))) * INST_VOL_MULT;
+
+	int16_t absvol = abs(opll->ch_out[8]);
+	if (absvol > opll_volumes[8]) opll_volumes[8] = absvol;
   }
   else
   {
@@ -1388,11 +1403,14 @@ update_output (OPLL * opll)
       opll->ch_out[12] += calc_slot_tom (MOD(opll,8)) * RHYTHM_VOL_MULT;
     if (!(opll->mask & OPLL_MASK_CYM) && (CAR(opll,8)->eg_mode != FINISH))
       opll->ch_out[13] -= calc_slot_cym (CAR(opll,8), MOD(opll,7)->pgout) * RHYTHM_VOL_MULT;
+
+	int16_t absvol = abs((opll->ch_out[12] + opll->ch_out[13]) / 2);
+	if (absvol > opll_volumes[8]) opll_volumes[8] = absvol;
   }
 
   /* Always calc average of two samples */
   for (i=0;i<15;i++) {
-    opll->ch_out[i] >>= 1;
+    opll->ch_out[i] >>= 2;//sh8bit, reduced volume because it clips a lot otherwise
   }
 
 }

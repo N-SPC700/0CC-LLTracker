@@ -110,10 +110,10 @@ static LONG WINAPI ExceptionHandler(__in struct _EXCEPTION_POINTERS *ep)
 	CStringW DocDumpFile = FTM_DUMP;
 	int counter = 1;
 
-	while (GetFileAttributesW(DocDumpFile + L".ftm") != 0xFFFFFFFF)
+	while (GetFileAttributesW(DocDumpFile + L".ltm") != 0xFFFFFFFF)
 		DocDumpFile = FormattedW(L"%s%i", FTM_DUMP, counter++);
 
-	DocDumpFile.Append(L".ftm");
+	DocDumpFile.Append(L".ltm");
 
 	// Display a message
 	CStringW text = L"This application has encountered a problem and needs to close.\n\n";

@@ -32,6 +32,8 @@ class CBinarySerializableInterface;
 
 namespace CClipboard {
 
+	bool ReadGlobalMemory(CBinarySerializableInterface &ser, HGLOBAL hMem);
+
 // Clipboard wrapper class, using this ensures that clipboard is closed when finished
 class CClipboardHandle {
 public:

@@ -30,12 +30,18 @@
 #include "InstHandlerVRC7.h"		// // //
 #include "ChipHandlerVRC7.h"		// // //
 
+extern int g_iPercMode;	//sh8bit
+extern int g_iPercModePrev;
+extern int g_iPercVolumeBD;
+extern int g_iPercVolumeSDHH;
+extern int g_iPercVolumeTOMCY;
+
 namespace {
 
-const int OPL_NOTE_ON = 0x10;
-const int OPL_SUSTAIN_ON = 0x20;
+	const int OPL_NOTE_ON = 0x10;
+	const int OPL_SUSTAIN_ON = 0x20;
 
-const int VRC7_PITCH_RESOLUTION = 2;		// // // extra bits for internal pitch
+	const int VRC7_PITCH_RESOLUTION = 2;		// // // extra bits for internal pitch
 
 } // namespace
 
@@ -44,6 +50,12 @@ CChannelHandlerVRC7::CChannelHandlerVRC7(stChannelID ch, CChipHandlerVRC7 &paren
 	chip_handler_(parent)
 {
 	m_iVolume = VOL_COLUMN_MAX;
+
+	g_iPercMode = 0;//sh8bit
+	g_iPercModePrev = 0;
+	g_iPercVolumeBD = 15;
+	g_iPercVolumeSDHH = 15;
+	g_iPercVolumeTOMCY = 15;
 }
 
 void CChannelHandlerVRC7::SetPatch(unsigned char Patch)		// // //
@@ -75,6 +87,22 @@ bool CChannelHandlerVRC7::HandleEffect(stEffectCommand cmd)
 		break;
 	case effect_t::VRC7_WRITE:		// // // 050B
 		chip_handler_.QueuePatchReg(m_iCustomPort, cmd.param);		// // //
+		break;
+	case effect_t::VRC7_PERCUSSION:	//sh8bit
+		switch (cmd.param & 0xf0)
+		{
+		case 0x00://turn percussion mode on/off
+			switch (cmd.param & 0x0f)
+			{
+			case 0x00://off
+				g_iPercMode &= ~0x20;
+				break;
+			case 0x01://on
+				g_iPercMode |= 0x20;
+				break;
+			}
+			break;
+		}
 		break;
 	default: return CChannelHandlerInverted::HandleEffect(cmd);
 	}
@@ -207,6 +235,43 @@ int CChannelHandlerVRC7::TriggerNote(int Note)
 		m_iCommand = CMD_NOTE_ON;
 	m_iOctave = Note / NOTE_RANGE;
 
+	if (g_iPercMode & 0x20)//sh8bit
+	{
+		if (GetChannelID().Subindex >= 6)
+		{
+			switch (Note % 12)	//drum mapping similar to the MIDI drum layout
+			{
+			case 0:	//BD
+			case 1:
+				g_iPercMode |= 0x10;
+				g_iPercVolumeBD = (15 - CalculateVolume());
+				break;
+			case 2: //SD
+			case 3:
+			case 4:
+				g_iPercMode |= 0x08;
+				g_iPercVolumeSDHH = (g_iPercVolumeSDHH & 0xf0) | (15 - CalculateVolume());
+				break;
+			case 5: //TOM
+			case 7:
+			case 9:
+			case 11:
+				g_iPercMode |= 0x04;
+				g_iPercVolumeTOMCY = (g_iPercVolumeTOMCY & 0x0f) | ((15 - CalculateVolume()) << 4);
+				break;
+			case 10: //CY
+				g_iPercMode |= 0x02;
+				g_iPercVolumeTOMCY = (g_iPercVolumeTOMCY & 0xf0) | (15 - CalculateVolume());
+				break;
+			case 6: //HH
+			case 8:
+				g_iPercMode |= 0x01;
+				g_iPercVolumeSDHH = (g_iPercVolumeSDHH & 0x0f) | ((15 - CalculateVolume()) << 4);
+				break;
+			}
+		}
+	}
+
 	return m_bLinearPitch ? (Note << LINEAR_PITCH_AMOUNT) : GetFnum(Note);		// // //
 }
 
@@ -266,6 +331,51 @@ void CChannelHandlerVRC7::RefreshChannel()
 
 	if (!m_bGate)
 		m_iCommand = CMD_NOTE_HALT;
+
+	if (subindex == 8)	//sh8bit
+	{
+		//only send all percussion related writes from one of the channels
+
+		if (g_iPercMode & 0x20)
+		{
+			//repeating writes will get filtered out during export
+
+			RegWrite(0x26, 0x00);	//force key off to percussion channels
+			RegWrite(0x27, 0x00);
+			RegWrite(0x28, 0x00);
+			RegWrite(0x16, 0x20);	//preset values for percussion
+			RegWrite(0x17, 0x50);
+			RegWrite(0x18, 0xc0);
+			RegWrite(0x26, 0x05);
+			RegWrite(0x27, 0x05);
+			RegWrite(0x28, 0x01);
+
+			RegWrite(0x0e, g_iPercMode);	//enable rhythm mode
+			RegWrite(0x36, g_iPercVolumeBD);	//percussion volume
+			RegWrite(0x37, g_iPercVolumeSDHH);
+			RegWrite(0x38, g_iPercVolumeTOMCY);
+
+			g_iPercMode &= ~0x1f;
+		}
+		else
+		{
+			if (g_iPercModePrev & 0x20)
+			{
+				RegWrite(0x0e, 0x00);	//disable rhythm mode
+				RegWrite(0x26, 0x00);	//force key off to percussion channels
+				RegWrite(0x27, 0x00);
+				RegWrite(0x28, 0x00);
+				RegWrite(0x36, 0x1f);
+				RegWrite(0x37, 0x1f);
+				RegWrite(0x38, 0x1f);
+				
+			}
+		}
+
+		g_iPercModePrev = g_iPercMode;
+	}
+
+	if ((g_iPercMode & 0x20) && (subindex >= 6)) return;	//don't allow notes on the percussion channels when percussion mode is enabled
 
 	int Cmd = 0;
 

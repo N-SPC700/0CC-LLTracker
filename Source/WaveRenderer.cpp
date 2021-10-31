@@ -38,7 +38,7 @@ void CWaveRenderer::CloseOutputStream() {
 
 void CWaveRenderer::Start() {
 	m_bStarted = true;
-	m_pWaveStream->WriteWAVHeader();
+	if(m_pWaveStream) m_pWaveStream->WriteWAVHeader();	//sh8bit
 }
 
 bool CWaveRenderer::ShouldStartPlayer() {

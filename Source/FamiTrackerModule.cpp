@@ -38,6 +38,10 @@ CFamiTrackerModule::CFamiTrackerModule() :
 	m_pInstrumentManager(std::make_unique<CInstrumentManager>())
 {
 	AllocateSong(0);
+
+	auto pInst = GetInstrumentManager()->CreateNew(INST_VRC7);
+	pInst->SetName("New Instrument");
+	GetInstrumentManager()->InsertInstrument(0, std::move(pInst));
 }
 
 CFamiTrackerModule::~CFamiTrackerModule() {

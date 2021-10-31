@@ -50,9 +50,15 @@
 #include <afxpriv.h>
 #endif
 
+int g_iPercMode = 0;	//sh8bit global variables for the percussion mode, being lazy to find them a proper place
+int g_iPercModePrev = 0;
+int g_iPercVolumeBD = 0;
+int g_iPercVolumeSDHH = 0;
+int g_iPercVolumeTOMCY = 0;
+
 // Single instance-stuff
-const WCHAR FT_SHARED_MUTEX_NAME[]	= L"FamiTrackerMutex";	// Name of global mutex
-const WCHAR FT_SHARED_MEM_NAME[]	= L"FamiTrackerWnd";		// Name of global memory area
+const WCHAR FT_SHARED_MUTEX_NAME[]	= L"LLTrackerMutex";	// Name of global mutex
+const WCHAR FT_SHARED_MEM_NAME[]	= L"LLTrackerWnd";		// Name of global memory area
 const DWORD	SHARED_MEM_SIZE			= 256;
 
 namespace {
@@ -200,8 +206,8 @@ BOOL CFamiTrackerApp::InitInstance()
 #if !defined(WIP) && !defined(_DEBUG)
 	// Add shell options
 	RegisterShellFileTypes();		// // //
-	const WCHAR FILE_ASSOC_NAME[] = L"0CC-FamiTracker Module";
-	RegSetValueW(HKEY_CLASSES_ROOT, L"0CCFamiTracker.Document", REG_SZ, FILE_ASSOC_NAME, std::size(FILE_ASSOC_NAME) * sizeof(WCHAR));
+	const WCHAR FILE_ASSOC_NAME[] = L"0CC-LLTracker Module";
+	RegSetValueW(HKEY_CLASSES_ROOT, L"0CCLLTracker.Document", REG_SZ, FILE_ASSOC_NAME, std::size(FILE_ASSOC_NAME) * sizeof(WCHAR));
 	// Add an option to play files
 	CStringW strPathName, strFileTypeId;
 	AfxGetModuleShortFileName(AfxGetInstanceHandle(), strPathName);
@@ -738,7 +744,7 @@ void CFTCommandLineInfo::ParseParam(const WCHAR* pszParam, BOOL bFlag, BOOL bLas
 			FILE *f;
 			AttachConsole(ATTACH_PARENT_PROCESS);
 			freopen_s(&f, "CON", "w", stdout);
-			std::cout << "0CC-FamiTracker v" << Get0CCFTVersionString() << '\n';		// // //
+			std::cout << "0CC-LLTracker v" << Get0CCFTVersionString() << '\n';		// // //
 			return;
 		}
 	}
@@ -868,7 +874,7 @@ BOOL CDocManager0CC::DoPromptFileName(CStringW &fileName, UINT nIDSTitle, DWORD 
 	// // // disregard doc template
 	CStringW path = theApp.GetSettings()->GetPath(PATH_FTM).c_str();
 
-	CFileDialog OpenFileDlg(bOpenFileDialog, L"0cc", NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, LoadDefaultFilter(IDS_FILTER_0CC, L"*.0cc; *.ftm"));		// // //
+	CFileDialog OpenFileDlg(bOpenFileDialog, L"ltm", NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, LoadDefaultFilter(IDS_FILTER_0CC, L"*.ltm"));		// // //
 	OpenFileDlg.m_ofn.Flags |= lFlags;
 	OpenFileDlg.m_ofn.lpstrFile = fileName.GetBuffer(_MAX_PATH);
 	OpenFileDlg.m_ofn.lpstrInitialDir = path.GetBuffer(_MAX_PATH);

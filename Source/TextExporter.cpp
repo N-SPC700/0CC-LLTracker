@@ -506,7 +506,7 @@ CStringA CTextExport::ExportCellText(const stChanNote &stCell, unsigned int nEff
 void CTextExport::ImportFile(const fs::path &FileName, CFamiTrackerDoc &Doc) {
 	// begin a new document
 	if (!Doc.OnNewDocument())
-		throw std::runtime_error {"Unable to create new Famitracker document."};
+		throw std::runtime_error {"Unable to create new LLtracker document."};
 
 	// parse the file
 	Tokenizer t(FileName);		// // //
@@ -968,7 +968,7 @@ CStringA CTextExport::ExportFile(const fs::path &FileName, CFamiTrackerDoc &Doc)
 		f.Write(str.GetString(), str.GetLength());
 	};
 
-	WriteString(FormattedA("# 0CC-FamiTracker text export %s\n\n", Get0CCFTVersionString()));		// // //
+	WriteString(FormattedA("# 0CC-LLTracker text export %s\n\n", Get0CCFTVersionString()));		// // //
 
 	WriteString("# Module information\n");
 	WriteString(FormattedA("%-15s %s\n", CT[CT_TITLE],     (LPCSTR)ExportString(modfile.GetModuleName())));

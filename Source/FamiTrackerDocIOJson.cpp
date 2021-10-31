@@ -114,7 +114,7 @@ constexpr std::string_view GetChipName(inst_type_t inst_type) noexcept {
 	switch (inst_type) {
 	case inst_type_t::INST_2A03: return "2A03"sv;
 	case inst_type_t::INST_VRC6: return "VRC6"sv;
-	case inst_type_t::INST_VRC7: return "VRC7"sv;
+	case inst_type_t::INST_VRC7: return "OPLL"sv;
 	case inst_type_t::INST_FDS:  return "FDS"sv;
 	case inst_type_t::INST_N163: return "N163"sv;
 	case inst_type_t::INST_S5B:  return "5B"sv;

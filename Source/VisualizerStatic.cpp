@@ -56,7 +56,7 @@ void CVisualizerStatic::SetSampleRate(int SampleRate)
 
 void CVisualizerStatic::Draw()
 {
-	const char STR[] = "0CC-FamiTracker";		// // //
+	const char STR[] = "0CC-LLTracker";		// // //
 	const size_t COUNT = std::size(STR);
 	static long long t = 0;
 

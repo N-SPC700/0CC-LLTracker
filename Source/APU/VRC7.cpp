@@ -30,9 +30,10 @@ const uint32_t CVRC7::OPL_CLOCK = 3579545;	// Clock frequency
 CVRC7::CVRC7(CMixer &Mixer, std::uint8_t nInstance) : CSoundChip(Mixer, nInstance)
 {
 	m_pRegisterLogger->AddRegisterRange(0x00, 0x07);		// // //
-	m_pRegisterLogger->AddRegisterRange(0x10, 0x15);
-	m_pRegisterLogger->AddRegisterRange(0x20, 0x25);
-	m_pRegisterLogger->AddRegisterRange(0x30, 0x35);
+	m_pRegisterLogger->AddRegisterRange(0x0e, 0x0e);
+	m_pRegisterLogger->AddRegisterRange(0x10, 0x18);
+	m_pRegisterLogger->AddRegisterRange(0x20, 0x28);
+	m_pRegisterLogger->AddRegisterRange(0x30, 0x38);
 	Reset();
 }
 
@@ -63,6 +64,9 @@ void CVRC7::SetVolume(float Volume)
 	m_fVolume = Volume * AMPLIFY;
 }
 
+#include "FamiTrackerEnv.h"	//sh8bit
+#include "SoundGen.h"
+
 void CVRC7::Write(uint16_t Address, uint8_t Value)
 {
 	switch (Address) {
@@ -71,6 +75,7 @@ void CVRC7::Write(uint16_t Address, uint8_t Value)
 			break;
 		case 0x9030:
 			OPLL_writeReg(m_pOPLLInt.get(), m_iSoundReg, Value);
+			FTEnv.GetSoundGenerator()->VGMLogOPLLWrite(m_iSoundReg, Value);//sh8bit
 			break;
 	}
 }
@@ -130,7 +135,7 @@ void CVRC7::Process(uint32_t Time)
 
 double CVRC7::GetFreq(int Channel) const		// // //
 {
-	if (Channel < 0 || Channel >= 6) return 0.;
+	if (Channel < 0 || Channel >= 9) return 0.;
 	int Lo = m_pRegisterLogger->GetRegister(Channel | 0x10)->GetValue();
 	int Hi = m_pRegisterLogger->GetRegister(Channel | 0x20)->GetValue() & 0x0F;
 	Lo |= (Hi << 8) & 0x100;

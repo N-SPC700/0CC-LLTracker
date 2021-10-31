@@ -223,8 +223,8 @@ void CFamiTrackerDoc::CreateEmpty()
 	DeleteContents();		// // //
 
 	Locked([&] {		// // //
-		// and select 2A03 only
-		GetModule()->SetChannelMap(FTEnv.GetSoundChipService()->MakeChannelMap(sound_chip_t::APU, 0));		// // //
+		// and select VRC7 only
+		GetModule()->SetChannelMap(FTEnv.GetSoundChipService()->MakeChannelMap(sound_chip_t::VRC7, 0));		// // //
 
 #ifdef AUTOSAVE
 		SetupAutoSave();
@@ -304,7 +304,7 @@ BOOL CFamiTrackerDoc::SaveDocument(LPCWSTR lpszPathName) const
 	// First write to a temp file (if saving fails, the original is not destroyed)
 	fs::path TempPath = fs::temp_directory_path();
 	WCHAR TempFile[MAX_PATH] = { };
-	GetTempFileNameW(TempPath.c_str(), L"FTM", 0, TempFile);
+	GetTempFileNameW(TempPath.c_str(), L"LTM", 0, TempFile);
 
 	try {		// // //
 		DocumentFile.Open(TempFile, std::ios::out | std::ios::binary);
@@ -456,7 +456,7 @@ fs::path CFamiTrackerDoc::GetFileTitle() const
 
 	if (FileName.extension() == ".bak")
 		FileName.replace_extension();
-	if (FileName.extension() == ".ftm" || FileName.extension() == ".0cc")
+	if (FileName.extension() == ".ltm")
 		FileName.replace_extension();
 
 	return FileName;

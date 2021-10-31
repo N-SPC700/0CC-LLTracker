@@ -108,7 +108,7 @@ bool CInstrumentFileTree::ScanDirectory(const CStringW &path, CMenu &Menu, int l
 		}
 	}
 
-	working = fileFinder.FindFile(path + L"\\*.fti");
+	working = fileFinder.FindFile(path + L"\\*.lti");
 
 	// Then files
 	while (working) {

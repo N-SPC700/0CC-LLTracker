@@ -233,7 +233,7 @@ void CFamiTrackerDocIO::PostLoad(CFamiTrackerModule &modfile) {
 void CFamiTrackerDocIO::LoadParams(CFamiTrackerModule &modfile, int ver) {
 	auto &Song = *modfile.GetSong(0);
 
-	CSoundChipSet Expansion = sound_chip_t::APU;		// // //
+	CSoundChipSet Expansion = sound_chip_t::VRC7;		// // //
 
 	// Get first track for module versions that require that
 	if (ver == 1)
@@ -1292,7 +1292,7 @@ void CFamiTrackerDocIO::LoadDetuneTables(CFamiTrackerModule &modfile, int ver) {
 			}
 		}
 		catch (CModuleException &e) {
-			static const std::string CHIP_STR[] = {"NTSC", "PAL", "Saw", "VRC7", "FDS", "N163"};
+			static const std::string CHIP_STR[] = {"NTSC", "PAL", "Saw", "OPLL", "FDS", "N163"};
 			e.AppendError("At " + CHIP_STR[Chip] + " detune table,");
 //			e.AppendError("At " + conv::to_utf8(CDetuneDlg::CHIP_STR[Chip]) + " detune table,");
 			throw e;

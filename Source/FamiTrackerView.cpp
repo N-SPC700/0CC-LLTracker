@@ -60,7 +60,7 @@
 #include "str_conv/str_conv.hpp"
 
 // Clipboard ID
-const WCHAR CFamiTrackerView::CLIPBOARD_ID[] = L"FamiTracker Pattern";
+const WCHAR CFamiTrackerView::CLIPBOARD_ID[] = L"LLTracker Pattern";
 
 // Effect texts
 // 0CC: add verbose description as in modplug
@@ -2051,6 +2051,7 @@ void CFamiTrackerView::UpdateNoteQueues() {		// // //
 			m_pNoteQueue->AddMap({
 				vrc7_subindex_t::ch1, vrc7_subindex_t::ch2, vrc7_subindex_t::ch3,
 				vrc7_subindex_t::ch4, vrc7_subindex_t::ch5, vrc7_subindex_t::ch6,
+				vrc7_subindex_t::ch7, vrc7_subindex_t::ch8, vrc7_subindex_t::ch9,
 			});
 		if (chips.ContainsChip(sound_chip_t::FDS))
 			m_pNoteQueue->AddMap({fds_subindex_t::wave});

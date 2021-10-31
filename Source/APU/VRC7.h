@@ -24,7 +24,8 @@
 #pragma once
 
 #include "APU/SoundChip.h"
-#include "APU/ext/emu2413.h"		// // //
+//#include "APU/ext/emu2413.h"		// // //
+#include "APU/ext/YM2413_Emu.h"	//sh8bit, can be reverted to the other core, but percussion in this one seem to sound more legit
 #include <vector>		// // //
 
 struct OPLL_deleter {

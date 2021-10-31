@@ -44,7 +44,7 @@ LPCWSTR TRACK_FORMAT = L"#%02i %.*s";		// // //
 
 IMPLEMENT_DYNAMIC(CModulePropertiesDlg, CDialog)
 CModulePropertiesDlg::CModulePropertiesDlg(CWnd* pParent /*=NULL*/)
-	: CDialog(CModulePropertiesDlg::IDD, pParent), m_iSelectedSong(0), m_iExpansions(sound_chip_t::APU)
+	: CDialog(CModulePropertiesDlg::IDD, pParent), m_iSelectedSong(0), m_iExpansions(sound_chip_t::VRC7)
 {
 }
 
@@ -70,12 +70,12 @@ BEGIN_MESSAGE_MAP(CModulePropertiesDlg, CDialog)
 	// ON_CBN_SELCHANGE(IDC_EXPANSION, OnCbnSelchangeExpansion)
 	ON_WM_HSCROLL()
 	ON_NOTIFY(LVN_ITEMCHANGED, IDC_SONGLIST, OnLvnItemchangedSonglist)
-	ON_BN_CLICKED(IDC_EXPANSION_VRC6, OnBnClickedExpansionVRC6)
+	/*ON_BN_CLICKED(IDC_EXPANSION_VRC6, OnBnClickedExpansionVRC6)
 	ON_BN_CLICKED(IDC_EXPANSION_VRC7, OnBnClickedExpansionVRC7)
 	ON_BN_CLICKED(IDC_EXPANSION_FDS, OnBnClickedExpansionFDS)
 	ON_BN_CLICKED(IDC_EXPANSION_MMC5, OnBnClickedExpansionMMC5)
 	ON_BN_CLICKED(IDC_EXPANSION_S5B, OnBnClickedExpansionS5B)
-	ON_BN_CLICKED(IDC_EXPANSION_N163, OnBnClickedExpansionN163)
+	ON_BN_CLICKED(IDC_EXPANSION_N163, OnBnClickedExpansionN163)*/
 	ON_CBN_SELCHANGE(IDC_COMBO_LINEARPITCH, OnCbnSelchangeComboLinearpitch)
 END_MESSAGE_MAP()
 
@@ -88,14 +88,14 @@ BOOL CModulePropertiesDlg::OnInitDialog()
 
 	// // //
 	m_cListSongs.SubclassDlgItem(IDC_SONGLIST, this);
-	m_cButtonEnableVRC6.SubclassDlgItem(IDC_EXPANSION_VRC6, this);
+	/*m_cButtonEnableVRC6.SubclassDlgItem(IDC_EXPANSION_VRC6, this);
 	m_cButtonEnableVRC7.SubclassDlgItem(IDC_EXPANSION_VRC7, this);
 	m_cButtonEnableFDS .SubclassDlgItem(IDC_EXPANSION_FDS , this);
 	m_cButtonEnableMMC5.SubclassDlgItem(IDC_EXPANSION_MMC5, this);
 	m_cButtonEnableN163.SubclassDlgItem(IDC_EXPANSION_N163, this);
 	m_cButtonEnableS5B .SubclassDlgItem(IDC_EXPANSION_S5B , this);
 	m_cSliderN163Chans.SubclassDlgItem(IDC_CHANNELS, this);
-	m_cStaticN163Chans.SubclassDlgItem(IDC_CHANNELS_NR, this);
+	m_cStaticN163Chans.SubclassDlgItem(IDC_CHANNELS_NR, this);*/
 	m_cComboVibrato.SubclassDlgItem(IDC_VIBRATO, this);
 	m_cComboLinearPitch.SubclassDlgItem(IDC_COMBO_LINEARPITCH, this);
 
@@ -111,6 +111,7 @@ BOOL CModulePropertiesDlg::OnInitDialog()
 	SelectSong(0);		// // //
 
 	// Expansion chips
+	/*
 	m_iExpansions = m_pModule->GetSoundChipSet();
 	m_cButtonEnableVRC6.SetCheck(m_iExpansions.ContainsChip(sound_chip_t::VRC6));
 	m_cButtonEnableVRC7.SetCheck(m_iExpansions.ContainsChip(sound_chip_t::VRC7));
@@ -118,13 +119,13 @@ BOOL CModulePropertiesDlg::OnInitDialog()
 	m_cButtonEnableMMC5.SetCheck(m_iExpansions.ContainsChip(sound_chip_t::MMC5));
 	m_cButtonEnableN163.SetCheck(m_iExpansions.ContainsChip(sound_chip_t::N163));
 	m_cButtonEnableS5B .SetCheck(m_iExpansions.ContainsChip(sound_chip_t::S5B ));
-
+	*/
 	// Vibrato
 	m_cComboVibrato.SetCurSel((m_pModule->GetVibratoStyle() == vibrato_t::Bidir) ? 0 : 1);
 	m_cComboLinearPitch.SetCurSel(m_pModule->GetLinearPitch() ? 1 : 0);
 
 	// Namco channel count
-	m_cSliderN163Chans.SetRange(1, MAX_CHANNELS_N163);		// // //
+	/*m_cSliderN163Chans.SetRange(1, MAX_CHANNELS_N163);		// // //
 
 	CStringW channelsStr(MAKEINTRESOURCEW(IDS_PROPERTIES_CHANNELS));		// // //
 	if (m_iExpansions.ContainsChip(sound_chip_t::N163)) {
@@ -143,7 +144,7 @@ BOOL CModulePropertiesDlg::OnInitDialog()
 		channelsStr.Append(L" N/A");
 	}
 	m_cStaticN163Chans.SetWindowTextW(channelsStr);
-
+	*/
 	auto *pFxx = static_cast<CSpinButtonCtrl *>(GetDlgItem(IDC_SPIN_FXX_SPLIT));		// // //
 	pFxx->SetRange(MIN_SPEED + 1, 0xFF);
 	pFxx->SetPos(m_pModule->GetSpeedSplitPoint());
@@ -335,7 +336,7 @@ void CModulePropertiesDlg::OnBnClickedSongImport()
 {
 	CModuleImportDlg importDlg(m_pDocument);
 
-	if (auto path = GetLoadPath("", "", IDS_FILTER_0CC, L"*.0cc; *.ftm")) {
+	if (auto path = GetLoadPath("", "", IDS_FILTER_0CC, L"*.ltm")) {
 		if (!importDlg.LoadFile(*path))		// // //
 			return;
 
@@ -346,13 +347,13 @@ void CModulePropertiesDlg::OnBnClickedSongImport()
 		SelectSong(m_pModule->GetSongCount() - 1);		// // //
 
 		m_iExpansions = m_pModule->GetSoundChipSet();		// // //
-		m_iN163Channels = m_pModule->GetNamcoChannels();
+		/*m_iN163Channels = m_pModule->GetNamcoChannels();
 		m_cButtonEnableVRC6.SetCheck(m_iExpansions.ContainsChip(sound_chip_t::VRC6));
 		m_cButtonEnableVRC7.SetCheck(m_iExpansions.ContainsChip(sound_chip_t::VRC7));
 		m_cButtonEnableFDS.SetCheck(m_iExpansions.ContainsChip(sound_chip_t::FDS));
 		m_cButtonEnableMMC5.SetCheck(m_iExpansions.ContainsChip(sound_chip_t::MMC5));
 		m_cButtonEnableN163.SetCheck(m_iExpansions.ContainsChip(sound_chip_t::N163));
-		m_cButtonEnableS5B.SetCheck(m_iExpansions.ContainsChip(sound_chip_t::S5B));
+		m_cButtonEnableS5B.SetCheck(m_iExpansions.ContainsChip(sound_chip_t::S5B));*/
 		m_pDocument->UpdateAllViews(NULL, UPDATE_PROPERTIES);
 	}
 }
@@ -381,11 +382,11 @@ void CModulePropertiesDlg::OnCbnSelchangeExpansion()
 */
 void CModulePropertiesDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
-	m_iN163Channels = m_cSliderN163Chans.GetPos();
+	/*m_iN163Channels = m_cSliderN163Chans.GetPos();
 
 	CStringW text(MAKEINTRESOURCEW(IDS_PROPERTIES_CHANNELS));		// // //
 	AppendFormatW(text, L" %i", m_iN163Channels);
-	m_cStaticN163Chans.SetWindowTextW(text);
+	m_cStaticN163Chans.SetWindowTextW(text);*/
 
 	CDialog::OnHScroll(nSBCode, nPos, pScrollBar);
 }
@@ -442,7 +443,7 @@ BOOL CModulePropertiesDlg::PreTranslateMessage(MSG* pMsg)
 
 	return CDialog::PreTranslateMessage(pMsg);
 }
-
+/*
 void CModulePropertiesDlg::OnBnClickedExpansionVRC6()
 {
 	m_iExpansions = m_iExpansions.EnableChip(sound_chip_t::VRC6, m_cButtonEnableVRC6.GetCheck() == BST_CHECKED);		// // //
@@ -493,7 +494,7 @@ void CModulePropertiesDlg::OnBnClickedExpansionN163()
 	}
 	m_cStaticN163Chans.SetWindowTextW(channelsStr);
 }
-
+*/
 void CModulePropertiesDlg::OnCbnSelchangeComboLinearpitch()
 {
 	static bool First = true;

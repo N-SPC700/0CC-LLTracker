@@ -68,13 +68,14 @@ enum class effect_t : std::uint8_t {
 	N163_WAVE_BUFFER,	// // //
 	FDS_VOLUME,			// // //
 	FDS_MOD_BIAS,		// // //
+	VRC7_PERCUSSION,	//sh8bit
 //	TARGET_VOLUME_SLIDE,
 /*
 	VRC7_MODULATOR,
 	VRC7_CARRIER,
 	VRC7_LEVELS,
 */
-	min = SPEED, max = FDS_MOD_BIAS, none = 0,
+	min = SPEED, max = VRC7_PERCUSSION, none = 0,
 };
 
 ENABLE_ENUM_CATEGORY(effect_t, enum_standard);
@@ -123,6 +124,7 @@ constexpr char EFF_CHAR[] = {
 	'Z',	// // // N163 wave buffer
 	'E',	// // // FDS volume envelope
 	'Z',	// // // FDS auto-FM bias
+	'N',	//sh8bit
 	//'9',	// Targeted volume slide
 	/*
 	'H',	// VRC7 modulator

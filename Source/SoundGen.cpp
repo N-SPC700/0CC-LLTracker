@@ -527,11 +527,11 @@ bool CSoundGen::PlayBuffer()
 			auto buf = m_pAudioDriver->ReleaseSoundBuffer();
 			switch (m_pAudioDriver->GetSampleSize()) {
 			case 8:
-				m_pWaveRenderer->FlushBuffer(array_view<std::uint8_t>(
+				if (m_bRenderingWave) m_pWaveRenderer->FlushBuffer(array_view<std::uint8_t>(
 					reinterpret_cast<const std::uint8_t *>(buf.data()), buf.size() / sizeof(std::uint8_t)));		// // //
 				return true;
 			case 16:
-				m_pWaveRenderer->FlushBuffer(array_view<std::int16_t>(
+				if (m_bRenderingWave) m_pWaveRenderer->FlushBuffer(array_view<std::int16_t>(
 					reinterpret_cast<const std::int16_t *>(buf.data()), buf.size() / sizeof(std::int16_t)));		// // //
 				return true;
 			}
@@ -878,15 +878,33 @@ bool CSoundGen::RenderToFile(const fs::path &fname, std::shared_ptr<CWaveRendere
 	CSingleLock l(&m_csRenderer); l.Lock();
 	m_pWaveRenderer = std::move(pRender);		// // //
 
-	ASSERT(!m_pRenderFile);
-	m_pRenderFile = std::make_shared<CSimpleFile>(fname, std::ios::out | std::ios::binary);		// // //
-	if (m_pRenderFile) {
-		m_pWaveRenderer->SetOutputStream(std::make_unique<COutputWaveStream>(m_pRenderFile, CWaveFileFormat {
-			CWaveFileFormat::format_code::pcm,
-			1,
-			static_cast<std::uint32_t>(FTEnv.GetSettings()->Sound.iSampleRate),
-			static_cast<std::uint16_t>(FTEnv.GetSettings()->Sound.iSampleSize),
-		}));
+	if (_stricmp(PathFindExtensionA(fname.string().c_str()), ".vgm") == 0)	//sh8bit
+	{
+		m_bRenderingWave = false;
+	}
+	else
+	{
+		m_bRenderingWave = true;
+	}
+
+	if (m_bRenderingWave)
+	{
+		ASSERT(!m_pRenderFile);
+		m_pRenderFile = std::make_shared<CSimpleFile>(fname, std::ios::out | std::ios::binary);		// // //
+		if (m_pRenderFile) {
+			m_pWaveRenderer->SetOutputStream(std::make_unique<COutputWaveStream>(m_pRenderFile, CWaveFileFormat{
+				CWaveFileFormat::format_code::pcm,
+				1,
+				static_cast<std::uint32_t>(FTEnv.GetSettings()->Sound.iSampleRate),
+				static_cast<std::uint16_t>(FTEnv.GetSettings()->Sound.iSampleSize),
+				}));
+			PostThreadMessageW(WM_USER_START_RENDER, 0, 0);
+			return true;
+		}
+	}
+	else
+	{
+		VGMStartLogging(fname.string().c_str());
 		PostThreadMessageW(WM_USER_START_RENDER, 0, 0);
 		return true;
 	}
@@ -914,6 +932,7 @@ void CSoundGen::StopRendering()
 
 	m_pWaveRenderer.reset();		// // //
 	m_pRenderFile.reset();		// // //
+	VGMStopLogging(); //sh8bit
 	ResetBuffer();
 	HaltPlayer();		// // //
 	ResetAPU();		// // //
@@ -1110,6 +1129,8 @@ void CSoundGen::UpdateAPU()
 		m_pAPU->AddTime(cycles);
 		m_pAPU->Process();
 		m_pAPU->EndFrame();		// // //
+
+		VGMLogFrame();	//sh8bit
 
 #ifdef WRITE_VGM		// // //
 		if (m_pVGMWriter)
@@ -1363,4 +1384,150 @@ const stRecordSetting &CSoundGen::GetRecordSetting() const
 void CSoundGen::SetRecordSetting(const stRecordSetting &Setting)
 {
 	m_pInstRecorder->SetRecordSetting(Setting);
+}
+
+#include "MainFrm.h"
+#include "FamiTrackerDoc.h"
+#include "FamiTrackerModule.h"
+#include "FamiTrackerEnv.h"
+
+void CSoundGen::VGMStartLogging(const char *Filename)
+{
+	vgmFile = fopen(Filename, "wb");
+
+	if (!vgmFile) return;
+
+	//prepare VGM header
+	
+	vgmFrameRate = FTEnv.GetMainFrame()->GetDoc().GetModule()->GetFrameRate();
+
+	int fm_clock = 3579545;
+
+	memset(vgmHeader, 0, sizeof(vgmHeader));
+
+	for (int i = 0; i < 256; ++i) vgmRegPrev[i] = -1;
+
+	vgmHeader[0x00] = 0x56;	//'Vgm ' signature
+	vgmHeader[0x01] = 0x67;
+	vgmHeader[0x02] = 0x6d;
+	vgmHeader[0x03] = 0x20;
+	vgmHeader[0x08] = 0x50;	//version 1.50
+	vgmHeader[0x09] = 0x01;
+	vgmHeader[0x0a] = 0x00;
+	vgmHeader[0x0b] = 0x00;
+	vgmHeader[0x0c] = 0;	//no PSG
+	vgmHeader[0x0d] = 0;
+	vgmHeader[0x0e] = 0;
+	vgmHeader[0x0f] = 0;
+	vgmHeader[0x10] = fm_clock & 255;	//YM2413
+	vgmHeader[0x11] = (fm_clock >> 8) & 255;
+	vgmHeader[0x12] = (fm_clock >> 16) & 255;
+	vgmHeader[0x13] = (fm_clock >> 24) & 255;
+	vgmHeader[0x14] = 0;	//no GD3
+	vgmHeader[0x15] = 0;
+	vgmHeader[0x16] = 0;
+	vgmHeader[0x17] = 0;
+	vgmHeader[0x24] = vgmFrameRate;
+	vgmHeader[0x25] = 0;
+	vgmHeader[0x26] = 0;
+	vgmHeader[0x27] = 0;
+	vgmHeader[0x28] = 0x09;	//noise feedback (SMS)
+	vgmHeader[0x29] = 0x00;
+	vgmHeader[0x2a] = 16;	//noise register width (SMS)
+	vgmHeader[0x2b] = 0;
+	vgmHeader[0x2c] = 0;	//no YM2612
+	vgmHeader[0x2d] = 0;
+	vgmHeader[0x2e] = 0;
+	vgmHeader[0x2f] = 0;
+	vgmHeader[0x30] = 0;	//no YM2151
+	vgmHeader[0x31] = 0;
+	vgmHeader[0x32] = 0;
+	vgmHeader[0x33] = 0;
+	vgmHeader[0x34] = 0x0c;	//offset to VGM data
+	vgmHeader[0x35] = 0;
+	vgmHeader[0x36] = 0;
+	vgmHeader[0x37] = 0;
+
+	fwrite(vgmHeader, sizeof(vgmHeader), 1, vgmFile);
+
+	vgmFrames = 0;
+	vgmLoopFrame = 0;
+	vgmLoopOffset = 0x40 - 0x1c;
+}
+
+void CSoundGen::VGMStopLogging()
+{
+	if (!vgmFile) return;
+
+	fputc(0x66, vgmFile);	//EOF
+
+	fflush(vgmFile);
+
+	int len = ftell(vgmFile) - 4;
+
+	vgmHeader[0x04] = len & 255;
+	vgmHeader[0x05] = (len >> 8) & 255;
+	vgmHeader[0x06] = (len >> 16) & 255;
+	vgmHeader[0x07] = (len >> 24) & 255;
+
+	int samples = vgmFrames * (44100 / vgmFrameRate);
+
+	vgmHeader[0x18] = samples & 255;
+	vgmHeader[0x19] = (samples >> 8) & 255;
+	vgmHeader[0x1a] = (samples >> 16) & 255;
+	vgmHeader[0x1b] = (samples >> 24) & 255;
+
+	int loop_samples = samples - vgmLoopFrame * (44100 / vgmFrameRate);
+
+	vgmHeader[0x1c] = vgmLoopOffset & 255;
+	vgmHeader[0x1d] = (vgmLoopOffset >> 8) & 255;
+	vgmHeader[0x1e] = (vgmLoopOffset >> 16) & 255;
+	vgmHeader[0x1f] = (vgmLoopOffset >> 24) & 255;
+
+	vgmHeader[0x20] = loop_samples & 255;
+	vgmHeader[0x21] = (loop_samples >> 8) & 255;
+	vgmHeader[0x22] = (loop_samples >> 16) & 255;
+	vgmHeader[0x23] = (loop_samples >> 24) & 255;
+
+	fseek(vgmFile, 0, SEEK_SET);
+	fwrite(vgmHeader, sizeof(vgmHeader), 1, vgmFile);
+
+	fclose(vgmFile);
+
+	vgmFile = 0;
+}
+
+void CSoundGen::VGMLogOPLLWrite(int reg, int val)
+{
+	if (!vgmFile) return;
+	if (!IsPlaying()) return;
+
+	if (vgmRegPrev[reg] == val) return;	//filter out repeating writes
+
+	vgmRegPrev[reg] = val;
+
+	uint8_t data[3];
+
+	data[0] = 0x51;
+	data[1] = reg;
+	data[2] = val;
+
+	fwrite(data, sizeof(data), 1, vgmFile);
+}
+
+void CSoundGen::VGMLogFrame()
+{
+	if (!vgmFile) return;
+	if (!IsPlaying()) return;
+
+	++vgmFrames;
+
+	if (vgmFrameRate == 60)
+	{
+		fputc(0x62, vgmFile);//ntsc
+	}
+	else
+	{
+		fputc(0x63, vgmFile);//pal
+	}
 }

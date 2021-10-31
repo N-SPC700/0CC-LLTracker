@@ -37,7 +37,7 @@
 const unsigned int CDocumentFile::FILE_VER		 = 0x0440;			// Current file version (4.40)
 const unsigned int CDocumentFile::COMPATIBLE_VER = 0x0100;			// Compatible file version (1.0)
 
-//const std::string_view CDocumentFile::FILE_HEADER_ID = {"FamiTracker Module", 18};		// // //
+//const std::string_view CDocumentFile::FILE_HEADER_ID = {"LLTracker Module", 18};		// // //
 //const std::string_view CDocumentFile::FILE_END_ID = "END";
 
 const unsigned int CDocumentFile::MAX_BLOCK_SIZE = 0x80000;
@@ -195,12 +195,12 @@ void CDocumentFile::ValidateFile()
 
 	// // // Older file version
 	if (GetFileVersion() < COMPATIBLE_VER)
-		throw CModuleException::WithMessage("FamiTracker module version too old (0x" + conv::from_int_hex(GetFileVersion()) +
+		throw CModuleException::WithMessage("LLTracker module version too old (0x" + conv::from_int_hex(GetFileVersion()) +
 			"), expected 0x" + conv::from_int_hex(COMPATIBLE_VER) + " or above");
 
 	// // // File version is too new
 	if (GetFileVersion() > 0x450u /*FILE_VER*/)		// // // 050B
-		throw CModuleException::WithMessage("FamiTracker module version too new (0x" + conv::from_int_hex(GetFileVersion()) +
+		throw CModuleException::WithMessage("LLTracker module version too new (0x" + conv::from_int_hex(GetFileVersion()) +
 			"), expected 0x" + conv::from_int_hex(0x450u) + " or below");
 
 	m_bFileDone = false;

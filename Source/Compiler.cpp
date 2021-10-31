@@ -173,7 +173,7 @@ void NSFEWriteBlockIdent(CSimpleFile &file, const char (&ident)[5], uint32_t sz)
 std::size_t NSFEWriteBlocks(CSimpleFile &file, const CFamiTrackerModule &modfile,
 	std::string_view title, std::string_view artist, std::string_view copyright) {		// // //
 	int iAuthSize = 0, iTimeSize = 0, iTlblSize = 0;
-	auto str = std::string {"0CC-FamiTracker "} + Get0CCFTVersionString();		// // //
+	auto str = std::string {"0CC-LLTracker "} + Get0CCFTVersionString();		// // //
 	iAuthSize = title.size() + artist.size() + copyright.size() + str.size() + 4;
 
 	NSFEWriteBlockIdent(file, "auth", iAuthSize);

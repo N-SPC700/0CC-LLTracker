@@ -118,7 +118,7 @@ void CCreateWaveDlg::OnBnClickedBegin()
 
 	// Ask for file location
 	auto initPath = FTEnv.GetSettings()->GetPath(PATH_WAV);
-	auto path = GetSavePath(FileName, initPath.c_str(), IDS_FILTER_WAV, L"*.wav");		// // //
+	auto path = GetSavePath(FileName, initPath.c_str(), IDS_FILTER_WAV, L"*.wav|VGM file (*.vgm)|*.vgm");		// // //
 	if (!path)
 		return;
 

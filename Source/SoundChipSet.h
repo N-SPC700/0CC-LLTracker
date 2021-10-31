@@ -44,7 +44,7 @@ public:
 	}
 
 	static const CSoundChipSet FromNSFFlag(value_type flag) {
-		return FromFlag(flag << 1).WithChip(sound_chip_t::APU);
+		return FromFlag(flag << 1);// .WithChip(sound_chip_t::APU);
 	}
 
 	static constexpr CSoundChipSet All() noexcept {

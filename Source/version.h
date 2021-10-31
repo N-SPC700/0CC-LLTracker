@@ -29,10 +29,10 @@
 // #define WIP
 
 // Version info
-#define VERSION_API  0
-#define VERSION_MAJ  3
-#define VERSION_MIN  15
-#define VERSION_REV  3
+#define VERSION_API  1
+#define VERSION_MAJ  0
+#define VERSION_MIN  0
+#define VERSION_REV  0
 
 constexpr int Compare0CCFTVersion(int api, int maj, int min, int rev) noexcept {
 	if (api > VERSION_API)

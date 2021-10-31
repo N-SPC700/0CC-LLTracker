@@ -85,7 +85,7 @@ const LPCWSTR CDetuneDlg::m_pNoteFlat[12] = {
 	L"C" , L"D-", L"D" , L"E-", L"E" , L"F",
 	L"G-", L"G" , L"A-", L"A" , L"B-", L"B",
 };
-const LPCWSTR CDetuneDlg::CHIP_STR[6] = {L"NTSC", L"PAL", L"Saw", L"VRC7", L"FDS", L"N163"};
+const LPCWSTR CDetuneDlg::CHIP_STR[6] = {L"NTSC", L"PAL", L"Saw", L"OPLL", L"FDS", L"N163"};
 
 BOOL CDetuneDlg::OnInitDialog()
 {

@@ -68,8 +68,8 @@ ENUM_CLASS_STANDARD(fds_subindex_t, std::uint8_t) {
 	min = wave, max = wave, none = static_cast<std::uint8_t>(-1),
 };
 ENUM_CLASS_STANDARD(vrc7_subindex_t, std::uint8_t) {
-	ch1, ch2, ch3, ch4, ch5, ch6,
-	min = ch1, max = ch6, none = static_cast<std::uint8_t>(-1),
+	ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8, ch9,
+	min = ch1, max = ch9, none = static_cast<std::uint8_t>(-1),
 };
 ENUM_CLASS_STANDARD(s5b_subindex_t, std::uint8_t) {
 	square1, square2, square3,

@@ -35,7 +35,7 @@ namespace {
 
 unsigned char default_inst[(16+3)*16] =
 {
-#include "apu/ext/vrc7tone.h"
+#include "apu/ext/2413tone.h"
 };
 
 } // namespace
@@ -89,21 +89,21 @@ BOOL CInstrumentEditorVRC7::OnInitDialog()
 
 	const LPCWSTR PATCH_NAME[16] = {
 		L"(custom patch)",
-		L"Bell",
+		L"Violin",
 		L"Guitar",
 		L"Piano",
 		L"Flute",
 		L"Clarinet",
-		L"Rattling Bell",
+		L"Oboe",
 		L"Trumpet",
-		L"Reed Organ",
-		L"Soft Bell",
-		L"Xylophone",
-		L"Vibraphone",
-		L"Brass",
-		L"Bass Guitar",
+		L"Organ",
+		L"Horn",
 		L"Synthesizer",
-		L"Chorus",
+		L"Harpsichord",
+		L"Vibraphone",
+		L"Synthesizer Bass",
+		L"Acoustic Bass",
+		L"Electric Guitar",
 	};
 
 	for (int i = 0; i < 16; ++i)

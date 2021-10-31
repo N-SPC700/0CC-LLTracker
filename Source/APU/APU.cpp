@@ -301,7 +301,7 @@ void CAPU::Log()
 			AppendFormatA(str, "%02X ", GetReg(sound_chip_t::FDS, 0x4080 + i));
 	}
 	if (m_iExternalSoundChip.ContainsChip(sound_chip_t::VRC7)) {
-		str.Append("VRC7 ");
+		str.Append("OPLL ");
 		for (int i = 0; i < 0x40; ++i)
 			AppendFormatA(str, "%02X ", GetReg(sound_chip_t::VRC7, i));
 	}

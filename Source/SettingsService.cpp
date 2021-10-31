@@ -174,7 +174,7 @@ private:
 stOldSettingContext::stOldSettingContext()
 {
 	std::free((void*)FTEnv.GetMainApp()->m_pszProfileName);
-	FTEnv.GetMainApp()->m_pszProfileName = L"FamiTracker";
+	FTEnv.GetMainApp()->m_pszProfileName = L"LLTracker";
 }
 
 stOldSettingContext::~stOldSettingContext()
@@ -352,8 +352,8 @@ void CSettingsService::SetupSettings() {
 	NewSetting(L"Other", L"Meter decay rate", false, s.bFastMeterDecayRate);		// // // 050B
 
 	// // // Paths
-	NewPathSetting(L"Paths", L"FTM path", PATH_FTM);
-	NewPathSetting(L"Paths", L"FTI path", PATH_FTI);
+	NewPathSetting(L"Paths", L"LTM path", PATH_FTM);
+	NewPathSetting(L"Paths", L"LTI path", PATH_FTI);
 	NewPathSetting(L"Paths", L"NSF path", PATH_NSF);
 	NewPathSetting(L"Paths", L"DMC path", PATH_DMC);
 	NewPathSetting(L"Paths", L"WAV path", PATH_WAV);

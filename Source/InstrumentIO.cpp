@@ -41,7 +41,7 @@
 namespace {
 
 // FTI instruments files
-const std::string_view FTI_INST_HEADER = "FTI";
+const std::string_view FTI_INST_HEADER = "LTI";
 const std::string_view FTI_INST_VERSION = "2.4";
 
 } // namespace
@@ -432,7 +432,7 @@ void CInstrumentIOVRC7::DoWriteToModule(const CInstrument &inst_, CDocumentFile 
 void CInstrumentIOVRC7::ReadFromModule(CInstrument &inst_, CDocumentFile &file) const {
 	auto &inst = dynamic_cast<CInstrumentVRC7 &>(inst_);
 
-	inst.SetPatch(AssertRange(file.GetBlockInt(), 0, 0xF, "VRC7 patch number"));
+	inst.SetPatch(AssertRange(file.GetBlockInt(), 0, 0xF, "OPLL patch number"));
 
 	for (int i = 0; i < 8; ++i)
 		inst.SetCustomReg(i, file.GetBlockChar());

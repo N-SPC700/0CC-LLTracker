@@ -74,7 +74,7 @@ void CRegisterDisplay::Draw() {
 		pSoundGen->IsExpansionEnabled(sound_chip_t::MMC5) * 4 +
 		pSoundGen->IsExpansionEnabled(sound_chip_t::N163) * 18 +
 		pSoundGen->IsExpansionEnabled(sound_chip_t::FDS) * 13 +
-		pSoundGen->IsExpansionEnabled(sound_chip_t::VRC7) * 9 +
+		pSoundGen->IsExpansionEnabled(sound_chip_t::VRC7) * (9+3) +
 		pSoundGen->IsExpansionEnabled(sound_chip_t::S5B) * 8);		// // //
 	int vis_line = 0;
 
@@ -247,7 +247,7 @@ void CRegisterDisplay::Draw() {
 	}
 
 	if (pSoundGen->IsExpansionEnabled(sound_chip_t::VRC7)) {		// // //
-		DrawHeader("VRC7 registers");		// // //
+		DrawHeader("OPLL registers");		// // //
 
 		GetRegs(sound_chip_t::VRC7, [] (int x) { return x; }, 8);
 		DrawReg("$00:", 8);		// // //

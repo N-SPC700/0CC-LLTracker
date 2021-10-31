@@ -28,7 +28,7 @@ namespace {
 const std::string_view DEFAULT_INST_NAME = "New instrument";		// // //
 
 // FTI instruments files
-const std::string_view INST_HEADER = "FTI";		// // // moved
+const std::string_view INST_HEADER = "LTI";		// // // moved
 const std::string_view INST_VERSION = "2.4";
 
 } // namespace

@@ -64,14 +64,14 @@ protected:
 	// // //
 	CListCtrl m_cListSongs;
 
-	CButton m_cButtonEnableVRC6;
+	/*CButton m_cButtonEnableVRC6;
 	CButton m_cButtonEnableVRC7;
 	CButton m_cButtonEnableFDS;
 	CButton m_cButtonEnableMMC5;
 	CButton m_cButtonEnableN163;
 	CButton m_cButtonEnableS5B;
 	CSliderCtrl m_cSliderN163Chans;
-	CStatic m_cStaticN163Chans;
+	CStatic m_cStaticN163Chans;*/
 
 	CComboBox m_cComboVibrato;
 	CComboBox m_cComboLinearPitch;
@@ -91,11 +91,11 @@ public:
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnLvnItemchangedSonglist(NMHDR *pNMHDR, LRESULT *pResult);
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	afx_msg void OnBnClickedExpansionVRC6();		// // //
+	/*afx_msg void OnBnClickedExpansionVRC6();		// // //
 	afx_msg void OnBnClickedExpansionVRC7();
 	afx_msg void OnBnClickedExpansionFDS();
 	afx_msg void OnBnClickedExpansionMMC5();
 	afx_msg void OnBnClickedExpansionS5B();
-	afx_msg void OnBnClickedExpansionN163();
+	afx_msg void OnBnClickedExpansionN163();*/
 	afx_msg void OnCbnSelchangeComboLinearpitch();
 };
